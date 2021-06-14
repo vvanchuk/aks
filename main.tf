@@ -1,11 +1,11 @@
-terraform {
-  required_providers {
-helm = {
-      source  = "hashicorp/helm"
+#terraform {
+  #required_providers {
+#helm = {
+    #  source  = "hashicorp/helm"
       #version = ">= 2.1.2"
-    }
-  }
-}
+    #}
+  #}
+#}
 
 provider "azurerm" {
   features {}
