@@ -45,6 +45,11 @@ variable "admin_username" {
   type        = string
 }
 
+variable "ks_namespaces" {
+  description = "list of non-default namespaces to create"
+  default = ["dev", "prod", "test"]
+}
+
 variable "agents_size" {
   default     = "Standard_D2s_v3"
   description = "The default virtual machine size for the Kubernetes agents"

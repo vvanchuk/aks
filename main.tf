@@ -158,6 +158,22 @@ resource "azurerm_kubernetes_cluster" "main" {
   tags = var.tags
 }
 
+resource "kubernetes_namespace" "namespace" {
+  for_each = toset(var.ks_namespaces)
+  
+  metadata {
+    annotations = {
+      name = "namespace"
+    }
+
+    labels = {
+      mylabel = each.key
+    }
+
+    name = each.key
+  }
+}
+
 provider "helm" {
   kubernetes {
     host                   = azurerm_kubernetes_cluster.main.kube_config.0.host
