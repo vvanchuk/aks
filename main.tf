@@ -162,10 +162,7 @@ resource "kubernetes_namespace" "namespace" {
   for_each = toset(var.ks_namespaces)
   
   metadata {
-    annotations = {
-      name = "namespace"
-    }
-
+    
     labels = {
       mylabel = each.key
     }
@@ -182,6 +179,25 @@ provider "helm" {
     cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.main.kube_config.0.cluster_ca_certificate)
   }
 }
+
+resource helm_release nginx_ingress {
+  name       = "nginx-ingress-controller"
+
+  repository = "https://charts.bitnami.com/bitnami"
+  chart      = "nginx-ingress-controller"
+
+  set {
+    name  = "service.type"
+    value = "ClusterIP"
+  }
+}
+
+resource "local_file" "kubeconfig" {
+  
+  content = azurerm_kubernetes_cluster.main.kube_config_raw
+  filename = "${path.root}/kubeconfig"
+}
+
 
 
 resource "azurerm_log_analytics_workspace" "main" {

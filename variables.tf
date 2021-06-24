@@ -50,6 +50,10 @@ variable "ks_namespaces" {
   default = ["dev", "prod", "test"]
 }
 
+#variable "kubeconfig" {
+ # type = string
+#}
+
 variable "agents_size" {
   default     = "Standard_D2s_v3"
   description = "The default virtual machine size for the Kubernetes agents"
