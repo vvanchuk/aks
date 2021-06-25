@@ -9,6 +9,40 @@ resource "azurerm_virtual_network" "aksvn" {
   resource_group_name = var.resource_group_name
 }
 
+resource "azurerm_network_security_group" "sg" {
+  name                = "acceptSG1"
+  location            = var.resource_group_location
+  resource_group_name = var.resource_group_name
+
+  security_rule {
+    name                       = "AllowAll_In_TCP"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "AllowAll_Out_TCP"
+    priority                   = 100
+    direction                  = "Outbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  tags = {
+    environment = "Production"
+  }
+}
+
 resource "azurerm_subnet" "aksnvn_sna" {
   name                 = "${azurerm_virtual_network.aksvn.name}-sna"
   resource_group_name  = var.resource_group_name
