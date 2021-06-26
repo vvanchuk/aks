@@ -158,18 +158,6 @@ resource "azurerm_kubernetes_cluster" "main" {
   tags = var.tags
 }
 
-resource "kubernetes_namespace" "namespace" {
-  for_each = toset(var.ks_namespaces)
-  
-  metadata {
-    
-    labels = {
-      mylabel = each.key
-    }
-
-    name = each.key
-  }
-}
 
 provider "helm" {
   kubernetes {
@@ -181,14 +169,19 @@ provider "helm" {
 }
 
 resource helm_release nginx_ingress {
+  #for_each = toset(var.ks_namespaces)
+  
   name       = "nginx-ingress-controller"
 
   repository = "https://charts.bitnami.com/bitnami"
   chart      = "nginx-ingress-controller"
 
+  #namespace = each.value
+  namespace = "kube-system"
+
   set {
-    name  = "service.type"
-    value = "ClusterIP"
+   name  = "service.type"
+   value = "ClusterIP"
   }
 }
 
@@ -198,6 +191,13 @@ resource "local_file" "kubeconfig" {
   filename = "${path.root}/kubeconfig"
 }
 
+
+module namespace {
+  source       = "./modules/namespace"
+  for_each = toset(var.ks_namespaces)
+  label = each.key
+  name = each.value
+}
 
 
 resource "azurerm_log_analytics_workspace" "main" {
