@@ -1,6 +1,6 @@
-provider "azurerm" {
-  features {}
-}
+#provider "azurerm" {
+ # features {}
+#}
 
 resource "kubernetes_namespace" "namespace" {
     
