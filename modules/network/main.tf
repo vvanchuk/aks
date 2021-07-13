@@ -15,11 +15,11 @@ resource "azurerm_network_security_group" "sg" {
   resource_group_name = var.resource_group_name
 
   security_rule {
-    name                       = "AllowAll_In_TCP"
+    name                       = "AllowAll_In"
     priority                   = 100
     direction                  = "Inbound"
     access                     = "Allow"
-    protocol                   = "Tcp"
+    protocol                   = "*"
     source_port_range          = "*"
     destination_port_range     = "*"
     source_address_prefix      = "*"
@@ -27,11 +27,11 @@ resource "azurerm_network_security_group" "sg" {
   }
 
   security_rule {
-    name                       = "AllowAll_Out_TCP"
+    name                       = "AllowAll_Out"
     priority                   = 100
     direction                  = "Outbound"
     access                     = "Allow"
-    protocol                   = "Tcp"
+    protocol                   = "*"
     source_port_range          = "*"
     destination_port_range     = "*"
     source_address_prefix      = "*"
@@ -39,7 +39,7 @@ resource "azurerm_network_security_group" "sg" {
   }
 
   tags = {
-    environment = "Production"
+    environment = "Dev"
   }
 }
 

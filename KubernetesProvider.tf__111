@@ -1,0 +1,33 @@
+locals {
+  kubernetes = {
+    host                   = module.kubernetes_cluster.host
+    token                  = module.customapps_kubernetes_cluster.token
+    client_certificate     = base64decode(module.customapps_kubernetes_cluster.client_certificate)
+    client_key             = base64decode(module.customapps_kubernetes_cluster.client_key)
+    cluster_ca_certificate = base64decode(module.customapps_kubernetes_cluster.cluster_ca_certificate)
+  }
+}
+provider "azurerm" {
+  subscription_id = var.subscription_id
+  client_id       = var.client_id
+  client_secret   = var.client_secret
+  tenant_id       = var.tenant_id
+
+  features {}
+}
+provider "kubernetes" {
+  host                   = local.kubernetes.host
+  token                  = local.kubernetes.token
+  client_certificate     = local.kubernetes.client_certificate
+  client_key             = local.kubernetes.client_key
+  cluster_ca_certificate = local.kubernetes.cluster_ca_certificate
+}
+provider "helm" {
+  kubernetes {
+    host                   = local.kubernetes.host
+    token                  = local.kubernetes.token
+    client_certificate     = local.kubernetes.client_certificate
+    client_key             = local.kubernetes.client_key
+    cluster_ca_certificate = local.kubernetes.cluster_ca_certificate
+  }
+}

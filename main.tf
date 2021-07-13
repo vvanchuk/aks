@@ -7,8 +7,36 @@
   #}
 #}
 
+locals {
+  kubernetes = {
+    host                   = azurerm_kubernetes_cluster.main.kube_config.0.host
+   # token                  = azurerm_kubernetes_cluster.main.kube_config.0.token
+    client_certificate     = base64decode(azurerm_kubernetes_cluster.main.kube_config.0.client_certificate)
+    client_key             = base64decode(azurerm_kubernetes_cluster.main.kube_config.0.client_key)
+    cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.main.kube_config.0.cluster_ca_certificate)
+  }
+}
+
+provider "kubernetes" {
+  host                   = local.kubernetes.host
+  #token                  = local.kubernetes.token
+  client_certificate     = local.kubernetes.client_certificate
+  client_key             = local.kubernetes.client_key
+  cluster_ca_certificate = local.kubernetes.cluster_ca_certificate
+}
+
 provider "azurerm" {
   features {}
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = local.kubernetes.host
+   # token                  = local.kubernetes.token
+    client_certificate     = local.kubernetes.client_certificate
+    client_key             = local.kubernetes.client_key
+    cluster_ca_certificate = local.kubernetes.cluster_ca_certificate
+  }
 }
 
 resource "azurerm_resource_group" "myaksc" {
@@ -159,14 +187,15 @@ resource "azurerm_kubernetes_cluster" "main" {
 }
 
 
-provider "helm" {
-  kubernetes {
-    host                   = azurerm_kubernetes_cluster.main.kube_config.0.host
-    client_certificate     = base64decode(azurerm_kubernetes_cluster.main.kube_config.0.client_certificate)
-    client_key             = base64decode(azurerm_kubernetes_cluster.main.kube_config.0.client_key)
-    cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.main.kube_config.0.cluster_ca_certificate)
-  }
-}
+#provider "helm" {
+  #load_config_file       = false
+  #kubernetes {
+   # host                   = azurerm_kubernetes_cluster.main.kube_config.0.host
+    # client_certificate     = base64decode(azurerm_kubernetes_cluster.main.kube_config.0.client_certificate)
+    # client_key             = base64decode(azurerm_kubernetes_cluster.main.kube_config.0.client_key)
+    # cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.main.kube_config.0.cluster_ca_certificate)
+  # }
+# }
 
 resource helm_release nginx_ingress {
   #for_each = toset(var.ks_namespaces)
@@ -192,12 +221,14 @@ resource "local_file" "kubeconfig" {
 }
 
 
-module namespace {
-  source       = "./modules/namespace"
-  for_each = toset(var.ks_namespaces)
-  label = each.key
-  name = each.value
-}
+#module namespace {
+  #source       = "./modules/namespace"
+  #for_each = toset(var.ks_namespaces)
+  #label = each.key
+  #name = each.value
+  #depends_on = [azurerm_kubernetes_cluster.main]
+#}
+
 
 
 resource "azurerm_log_analytics_workspace" "main" {
@@ -225,6 +256,18 @@ resource "azurerm_log_analytics_solution" "main" {
   }
 
   tags = var.tags
+}
+
+resource "kubernetes_namespace" "mynamespaces" {
+  #for_each = toset(var.ks_namespaces)  
+  metadata {
+    #labels = {
+    #label = each.key
+    #}
+
+    name = "mynamespace1"
+  }
+  depends_on = [azurerm_kubernetes_cluster.main]
 }
 
 
