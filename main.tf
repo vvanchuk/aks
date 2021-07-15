@@ -10,7 +10,7 @@
 locals {
   kubernetes = {
     host                   = azurerm_kubernetes_cluster.main.kube_config.0.host
-   # token                  = azurerm_kubernetes_cluster.main.kube_config.0.token
+   # token                  = 
     client_certificate     = base64decode(azurerm_kubernetes_cluster.main.kube_config.0.client_certificate)
     client_key             = base64decode(azurerm_kubernetes_cluster.main.kube_config.0.client_key)
     cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.main.kube_config.0.cluster_ca_certificate)
@@ -19,7 +19,7 @@ locals {
 
 provider "kubernetes" {
   host                   = local.kubernetes.host
-  #token                  = local.kubernetes.token
+# token                  = local.kubernetes.token
   client_certificate     = local.kubernetes.client_certificate
   client_key             = local.kubernetes.client_key
   cluster_ca_certificate = local.kubernetes.cluster_ca_certificate
