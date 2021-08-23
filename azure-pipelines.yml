@@ -12,6 +12,7 @@ pool:
 steps:
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
+- script: az login
 - script: terraform init -force-copy
 - script: terraform apply --auto-approve
 
