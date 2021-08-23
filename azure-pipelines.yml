@@ -12,9 +12,9 @@ pool:
 steps:
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
-- script: az login
-- script: terraform init -force-copy
-- script: terraform apply --auto-approve
+# - script: az login
+# - script: terraform init -force-copy
+- script: terraform destroy --auto-approve
 
 - script: |
     echo Add other tasks to build, test, and deploy your project.
